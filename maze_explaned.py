@@ -1,4 +1,4 @@
-import sys
+import sys  # Importa o módulo sys para manipulação de argumentos de linha de comando
 
 # Classe que representa um nó no grafo de busca
 class Node():
@@ -10,34 +10,35 @@ class Node():
 # Classe que representa a fronteira usando Pilha (para busca em profundidade - DFS)
 class StackFrontier():
     def __init__(self):
-        self.frontier = []
+        self.frontier = []  # Inicializa a fronteira como uma lista vazia
 
     def add(self, node):
-        self.frontier.append(node)
+        self.frontier.append(node)  # Adiciona um nó à fronteira
 
     def contains_state(self, state):
-        return any(node.state == state for node in self.frontier)
+        return any(node.state == state for node in self.frontier)  # Verifica se um estado já está na fronteira
 
     def empty(self):
-        return len(self.frontier) == 0
+        return len(self.frontier) == 0  # Retorna True se a fronteira estiver vazia
 
     def remove(self):
         if self.empty():
-            raise Exception("empty frontier")
+            raise Exception("empty frontier")  # Lança exceção se tentar remover de uma fronteira vazia
         else:
-            node = self.frontier[-1]  # Remove o último (LIFO - Pilha)
+            node = self.frontier[-1]  # Remove o último nó da fronteira (LIFO - Pilha)
             self.frontier = self.frontier[:-1]
-            return node
+            return node  # Retorna o nó removido
 
 # Classe que representa a fronteira usando Fila (para busca em largura - BFS)
 class QueueFrontier(StackFrontier):
     def remove(self):
         if self.empty():
-            raise Exception("empty frontier")
+            raise Exception("empty frontier")  # Lança exceção se tentar remover de uma fronteira vazia
         else:
-            node = self.frontier[0]  # Remove o primeiro (FIFO - Fila)
+            node = self.frontier[0]  # Remove o primeiro nó da fronteira (FIFO - Fila)
             self.frontier = self.frontier[1:]
-            return node
+            return node  # Retorna o nó removido
+
 
 # Classe que representa o labirinto e sua solução
 class Maze():
@@ -98,55 +99,55 @@ class Maze():
             print()
         print()
 
-    # Método para encontrar vizinhos válidos de um estado
-    def neighbors(self, state):
-        row, col = state
-        candidates = [
-            ("up", (row - 1, col)),
-            ("down", (row + 1, col)),
-            ("left", (row, col - 1)),
-            ("right", (row, col + 1))
-        ]
-        
-        result = []
-        for action, (r, c) in candidates:
-            if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
-                result.append((action, (r, c)))
-        return result
+# Método para encontrar vizinhos válidos de um estado
+def neighbors(self, state):
+    row, col = state  # Obtém as coordenadas do estado atual
+    candidates = [  # Define os movimentos possíveis (cima, baixo, esquerda, direita)
+        ("up", (row - 1, col)),
+        ("down", (row + 1, col)),
+        ("left", (row, col - 1)),
+        ("right", (row, col + 1))
+    ]
+    
+    result = []  # Lista para armazenar os vizinhos válidos
+    for action, (r, c) in candidates:
+        if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
+            result.append((action, (r, c)))  # Adiciona vizinhos válidos à lista
+    return result  # Retorna a lista de vizinhos
 
-    # Método para resolver o labirinto usando busca em profundidade
-    def solve(self):
-        self.num_explored = 0
-        start = Node(state=self.start, parent=None, action=None)
-        frontier = StackFrontier()  # Usando pilha (DFS)
-        frontier.add(start)
-        self.explored = set()
+# Método para resolver o labirinto usando busca em profundidade
+def solve(self):
+    self.num_explored = 0  # Inicializa o contador de estados explorados
+    start = Node(state=self.start, parent=None, action=None)  # Cria o nó inicial
+    frontier = StackFrontier()  # Usando pilha (DFS)
+    frontier.add(start)  # Adiciona o nó inicial à fronteira
+    self.explored = set()  # Conjunto para armazenar estados já explorados
+    
+    while True:
+        if frontier.empty():  # Se a fronteira estiver vazia, não há solução
+            raise Exception("no solution")
         
-        while True:
-            if frontier.empty():
-                raise Exception("no solution")
-            
-            node = frontier.remove()
-            self.num_explored += 1
-            
-            if node.state == self.goal:
-                actions = []
-                cells = []
-                while node.parent is not None:
-                    actions.append(node.action)
-                    cells.append(node.state)
-                    node = node.parent
-                actions.reverse()
-                cells.reverse()
-                self.solution = (actions, cells)
-                return
-            
-            self.explored.add(node.state)
-            
-            for action, state in self.neighbors(node.state):
-                if not frontier.contains_state(state) and state not in self.explored:
-                    child = Node(state=state, parent=node, action=action)
-                    frontier.add(child)
+        node = frontier.remove()  # Remove um nó da fronteira
+        self.num_explored += 1  # Incrementa o número de estados explorados
+        
+        if node.state == self.goal:  # Se o nó for o objetivo, constrói a solução
+            actions = []  # Lista para armazenar as ações do caminho
+            cells = []  # Lista para armazenar as células do caminho
+            while node.parent is not None:
+                actions.append(node.action)  # Adiciona a ação tomada
+                cells.append(node.state)  # Adiciona o estado ao caminho
+                node = node.parent  # Retrocede para o nó pai
+            actions.reverse()  # Inverte a ordem para obter a sequência correta
+            cells.reverse()  # Inverte a ordem dos estados
+            self.solution = (actions, cells)  # Armazena a solução
+            return  # Sai do método
+        
+        self.explored.add(node.state)  # Marca o estado como explorado
+        
+        for action, state in self.neighbors(node.state):  # Verifica os vizinhos do nó
+            if not frontier.contains_state(state) and state not in self.explored:
+                child = Node(state=state, parent=node, action=action)  # Cria um novo nó filho
+                frontier.add(child)  # Adiciona o filho à fronteira
 
     # Método para gerar uma imagem do labirinto
     def output_image(self, filename, show_solution=True, show_explored=False):
