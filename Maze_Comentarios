@@ -1,0 +1,30 @@
+Principais etapas do código:  
+
+### 🔹 **1. Definição das Classes Principais**  
+- **`Node`**: Representa um estado no labirinto, armazenando posição, ação e o nó pai.  
+- **`StackFrontier` e `QueueFrontier`**: Gerenciam a fronteira da busca (pilha para DFS, fila para BFS).  
+
+Classe Node: Linha 3
+Classe StackFrontier e QueueFrontier: Linha 10 e 25
+
+### 🔹 **2. Leitura e Construção do Labirinto**  
+- O arquivo de texto é lido para criar a matriz do labirinto.  
+- Identifica o ponto de início (`A`), o destino (`B`) e as paredes (`*`).  
+
+Início da classe Maze (leitura do arquivo e criação do labirinto): Linha 34
+
+### 🔹 **3. Resolução do Labirinto**  
+- Utiliza **busca em profundidade (DFS)** para encontrar um caminho do início até o destino.  
+- Mantém um conjunto de estados explorados para evitar loops.  
+- Ao encontrar o destino, reconstrói o caminho percorrido.  
+
+Método solve (busca em profundidade DFS para encontrar solução): Linha 87
+
+### 🔹 **4. Exibição e Geração de Imagem**  
+- **Imprime o labirinto** no console, mostrando paredes, caminho e solução.  
+- **Gera uma imagem PNG** do labirinto e da solução usando a biblioteca Pillow.  
+
+Método print (exibir o labirinto no console): Linha 63
+Método output_image (gerar imagem do labirinto): Linha 127
+
+Leitura do arquivo e execução do programa: Linha 157
